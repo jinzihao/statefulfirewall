@@ -22,7 +22,7 @@ using namespace std;
 class Connection{
     friend class StatefulFirewall;
 private:
-	String sourceip;
+    String sourceip;
     String destip;
     int sourceport;
     int destport;
@@ -32,29 +32,29 @@ private:
     int handshake_stat;
     bool isfw; //true if forward connection. false if reverse connection.
 public:
-	Connection(String s, String d, int sp, int dp, unsigned long seq_s, unsigned long seq_d, int pr, bool fwdflag)
+    Connection(String s, String d, int sp, int dp, unsigned long seq_s, unsigned long seq_d, int pr, bool fwdflag)
         : sourceip(s), destip(d), sourceport(sp), destport(dp), proto(pr), sourceseq(seq_s), destseq(seq_d),
           isfw(fwdflag), handshake_stat(0) {
-    	//Add your implementation here.
-	}
+        //Add your implementation here.
+    }
 
     Connection() : sourceip("0.0.0.0"), destip("0.0.0.0"), sourceport(0), destport(0), proto(0)
             , sourceseq(0), destseq(0), isfw(false), handshake_stat(0) {
-	}
+    }
 
     ~Connection() {}
 
-	/* Can be useful for debugging*/
-	void print() const {
-    	//Add your implementation here.
+    /* Can be useful for debugging*/
+    void print() const {
+        //Add your implementation here.
         click_chatter("proto = %d, %s:%d[%d] -> %s:%d[%d], isfw = %d", proto, sourceip.c_str(), sourceport, sourceseq, destip.c_str(), destport, destseq, isfw);
-	}
+    }
 
-	/* Overload == operator to check if two Connection objects are equal.
-	 * You may or may not want to ignore the isfw flag for comparison depending on your implementation.
-	 * Return true if equal. false otherwise. */
+    /* Overload == operator to check if two Connection objects are equal.
+     * You may or may not want to ignore the isfw flag for comparison depending on your implementation.
+     * Return true if equal. false otherwise. */
     bool operator==(const Connection &other) const {
-    	//Add your implementation here.
+        //Add your implementation here.
         return proto == other.proto && sourceip == other.sourceip && sourceport == other.sourceport
                && destip == other.destip && destport == other.destport;
     }
@@ -93,33 +93,33 @@ public:
         handshake_stat = 1;
     }
 
-	/* Return value of isfw*/
-	bool is_forward() const {
+    /* Return value of isfw*/
+    bool is_forward() const {
         return isfw;
     }
 };
 
 class Policy{
 private:
-	String sourceip;
-	String destip;
-	int sourceport;
-	int destport;
-	int proto;
-	int action;
+    String sourceip;
+    String destip;
+    int sourceport;
+    int destport;
+    int proto;
+    int action;
 
    static uint32_t parseIPStr(const String& ip);
 public:
-	Policy(String s, String d, int sp, int dp, int p, int act)
+    Policy(String s, String d, int sp, int dp, int p, int act)
             : sourceip(s), destip(d), sourceport(sp), destport(dp), proto(p), action(act) {
-    	//Add your implementation here.
-	}
+        //Add your implementation here.
+    }
 
-	~Policy() {}
-	/* Return a Connection object representing policy */
-	Connection getConnection();
-	/* Return action for this Policy */
-	int getAction();
+    ~Policy() {}
+    /* Return a Connection object representing policy */
+    Connection getConnection();
+    /* Return action for this Policy */
+    int getAction();
 };
 
 struct cmp_connection {
@@ -139,11 +139,11 @@ struct ConnStatus {
 class StatefulFirewall : public Element {
 private:
     enum {CONN_SYN, CONN_SYNACK, CONN_ACK}; // 3 steps in establishing a TCP connection
-	std::map<Connection, ConnStatus, cmp_connection> connections; // Map of connections to their action and status.
+    std::map<Connection, ConnStatus, cmp_connection> connections; // Map of connections to their action and status.
     std::set<Connection, cmp_connection> negative_cache; // simulate the behavior described in https://piazza.com/class/jqdb9rmezfq1y5?cid=160
-	std::vector<Policy> list_of_policies;
+    std::vector<Policy> list_of_policies;
 public:
-	StatefulFirewall() : DEFAULTACTION(0) {}
+    StatefulFirewall() : DEFAULTACTION(0) {}
 
     ~StatefulFirewall() {}
 
@@ -155,11 +155,11 @@ public:
      * Hint: Refer to configure methods in other elements.*/
     int configure(Vector<String> &conf, ErrorHandler *errh);
 
-    const char *class_name() const		{ return "StatefulFirewall"; }
-    const char *port_count() const		{ return "1/2"; }
-    const char *processing() const		{ return PUSH; }
+    const char *class_name() const        { return "StatefulFirewall"; }
+    const char *port_count() const        { return "1/2"; }
+    const char *processing() const        { return PUSH; }
     // this element does not need AlignmentInfo; override Classifier's "A" flag
-    const char *flags() const			{ return ""; }
+    const char *flags() const            { return ""; }
 
     /* return true if Packet represents a new connection
      * i.e., check if the connection exists in the map.
